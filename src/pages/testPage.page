@@ -1,0 +1,28 @@
+<!--
+ - Created by JWJANG on 2023-01-02.
+ -->
+<apex:page standardController="Account">
+
+    <!-- This page must be accessed with an Account Id in the URL. For example:
+         https://<salesforceInstance>/apex/AccountLocation?id=001D000000JRBet -->
+
+    <apex:pageBlock >
+        <apex:pageBlockSection title="{! Account.Name } Location">
+
+            <!-- Display the text version of the address -->
+            <apex:outputPanel >
+                <apex:outputField value="{!Account.BillingStreet}"/><br/>
+                <apex:outputField value="{!Account.BillingCity}"/>, &nbsp;
+                <apex:outputField value="{!Account.BillingState}"/> &nbsp;
+                <apex:outputField value="{!Account.BillingPostalCode}"/><br/>
+                <apex:outputField value="{!Account.BillingCountry}"/>
+            </apex:outputPanel>
+
+            <!-- Display the address on a map -->
+<!--            <apex:map width="600px" height="400px" mapType="roadmap" zoomLevel="17" center="{!Account.BillingStreet},{!Account.BillingCity},{!Account.BillingState}">-->
+<!--            </apex:map>-->
+
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+
+</apex:page>

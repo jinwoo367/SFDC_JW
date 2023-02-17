@@ -1,0 +1,93 @@
+<!--
+ - Created by JWJANG on 2022-12-27.
+ -->
+
+<!-- Google Map -->
+<template>
+    <div class="slds-grid slds-wrap slds-theme_default">
+
+        <!-- 좌측 Area -->
+        <div class="slds-col slds-size_3-of-12">
+
+            <div class="slds-p-around_medium slds-border_right slds-scrollable_y" style="height:100%">
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <lightning-button icon-name="utility:add" slot="actions" alternative-text="add" title="Add" size="small" class="slds-p-around_medium" label="Add Event" onclick={openModal}></lightning-button>
+                        <lightning-button icon-name="utility:add" slot="actions" alternative-text="add" title="Add" size="small" class="slds-p-around_medium" label="Do Test" onclick={doTest}></lightning-button>
+                    </div>
+                </div>
+
+                <ul class="slds-coordinates__list">
+                    <li class="slds-coordinates__item">
+                        <span class="slds-assistive-text" aria-live="polite"></span>
+                        <button class="slds-coordinates__item-action slds-button_reset slds-media" aria-pressed="false">
+                            <span class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-account" title="Description of icon when needed">
+                                    <svg class="slds-icon" aria-hidden="true">
+<!--                                        <use xlink:href="#"></use>-->
+                                    </svg>
+                                    <span class="slds-assistive-text">Description of icon when needed</span>
+                                </span>
+                            </span>
+                            <span class="slds-media__body">
+                                <span class="slds-text-link">Worldwide Corporate Headquarters</span>
+                                <span>The Landmark @ One Market, San Francisco, CA</span>
+                            </span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 우측 Area -->
+        <div class="slds-col slds-size_9-of-12">
+            <lightning-map map-markers={mapMarkers}
+                           center={mapCenter}
+                           options={mapOptions}
+                           zoom-level="15"
+                           list-view="invisible"
+                           id="google-map" name="gMap"
+            ></lightning-map>
+        </div>
+    </div>
+
+    <!-- Open a modal with new event form  -->
+    <template if:true={openModalFlag}>
+        <div data-modal="custommodal" class="modalclass">
+            <section role="dialog"
+                     tabindex="-1"
+                     aria-labelledby="modal-heading-01"
+                     aria-modal="true"
+                     aria-describedby="modal-content-id-1"
+                     class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning-button-icon icon-name="utility:close"
+                                               class="slds-modal__close"
+                                               alternative-text="Close"
+                                               title="Close"
+                                               size="large"
+                                               variant="bare-inverse"
+                                               onclick={closeModal} >
+
+                        </lightning-button-icon>
+                        <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Event</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium"
+                         id="modal-content-id-1">
+                        <lightning-input label="Title" name="title" type="text" required onkeyup={handleKeyup}></lightning-input>
+                        <lightning-input label="Start Date" name="start" type="datetime" required value={startDate}></lightning-input>
+                        <lightning-input label="End Date" name="end" type="datetime" required value={endDate}></lightning-input>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button-group>
+                            <lightning-button label="Close" title="Close" icon-name="utility:close" onclick={closeModal}></lightning-button>
+                            <lightning-button label="Save" title="Save" variant="brand" icon-name="utility:save" onclick={handleSave}></lightning-button>
+                        </lightning-button-group>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </template>
+</template>

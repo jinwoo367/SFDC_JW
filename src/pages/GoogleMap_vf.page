@@ -1,0 +1,140 @@
+<!--
+ - Created by JWJANG on 2023-01-02.
+ -->
+
+<apex:page id="googleMap_vf" controller="GoogleMap_vfController" sideBar="true" action="{!getInitData}">
+    <head>
+        <style>
+            #map {
+                font-family: Arial;
+                font-size: 12px;
+                line-height: normal !important;
+                height: 860px;
+                background: transparent;
+            }
+        </style>
+        <apex:includeScript value="https://maps.googleapis.com/maps/api/js?key=AIzaSyBR98bruTJ9WPUmYW4qr9bPvrBUVdWV90c&libraries=places&sensor=false"/>
+        <apex:includeScript value="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"/>
+        <script type="text/javascript">
+            var map;
+            var marker;
+            var geocoder = new google.maps.Geocoder();
+            var labelCnt = 0;
+
+            $(document).ready(function() {
+                initMap();
+
+                //GoogleMap_vfController.getInitData();
+
+                var marker1 = new google.maps.Marker({
+                    location: {
+                        City: 'Seoul',
+                        Country: 'Korea',
+                        PostalCode: '04790',
+                        State: 'Seongdong-gu',
+                        Street: '99, Seongsuil-ro'
+                    },
+                    map: map,
+                    draggable: true,
+                    label: '123'
+                });
+
+                var marker2 = new google.maps.Marker({
+                    location: {
+                        City: '서울',
+                        Country: 'Korea',
+                        PostalCode: '08793',
+                        State: '관악구',
+                        Street: '인헌2길 15-4'
+                    },
+                    map: map,
+                    draggable: true,
+                    label: '124'
+                });
+
+                var marker3 = new google.maps.Marker({
+                    position: {lat : 37.549505, lng : 127.050386},
+                    map: map,
+                    draggable: true,
+                    label: '125'
+                });
+            });
+
+            function initMap() {
+                console.log("initMap");
+
+                var myOptions = {
+                    zoom: 15,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: false,
+                    center : {lat : 37.549505, lng : 127.050386}
+                }
+
+                //create map
+                map = new google.maps.Map(document.getElementById("map"), myOptions);
+            }
+
+            function resizeIframe() {
+                var me = window.name;
+                if (me) {
+                    var iframes = parent.document.getElementsByName(me);
+                    if (iframes && iframes.length == 1) {
+                        height = document.body.offsetHeight;
+                        iframes[0].style.height = height + "px";
+                    }
+                }
+            }
+
+            function drawMarker() {
+                labelCnt += 1;
+                locationMarker = new google.maps.Marker({
+                    position: {lat : 37.549505, lng : 127.050386},
+                    map: map,
+                    draggable: true,
+                    label: labelCnt.toString()
+                });
+            }
+        </script>
+    </head>
+
+    <body>
+        <div>
+
+            <!-- 좌측 Area -->
+            <div style="float: left;width:25%">
+
+                <div style="height:75%">
+                    <div class="slds-clearfix">
+                        <div class="slds-float_right">
+                            <button type="button" onclick="drawMarker();">test</button>
+                            <button type="button" onclick="drawMarker();">test</button>
+                            <button type="button" onclick="drawMarker();">test</button>
+                        </div>
+                    </div>
+
+                    <ul class="slds-coordinates__list">
+                        <apex:repeat value="{!mapMarkers}" var="item">
+                            <li>
+                                <span class="slds-assistive-text" aria-live="polite"></span>
+                                <button type="button" onclick="drawMarker();">
+                                    <span class="slds-media__figure">
+                                        <span class="slds-icon_container slds-icon-standard-account" title="Description of icon when needed">
+                                            <span class="slds-assistive-text">Description of icon when needed</span>
+                                        </span>
+                                    </span>
+                                    <span class="slds-media__body">
+                                        <span class="slds-text-link">test</span>
+                                        <span>test</span>
+                                    </span>
+                                </button>
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 우측 Area -->
+            <div style="float: left;width:70%" id="map"></div>
+        </div>
+    </body>
+</apex:page>

@@ -1,0 +1,105 @@
+<!--
+ - Created by JWJANG on 2022-12-27.
+ -->
+
+<aura:component description="googleMap_aura"
+                controller="googleMap_auraController"
+                implements ="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"
+                access="global">
+
+    <!-- attributes -->
+    <aura:attribute name="mapCenter" type="Object" default="{}"/>
+    <aura:attribute name="mapOptions" type="Object" default="{}"/>
+    <aura:attribute name="markersTitle" type="String" default="마커리스트"/>
+    <aura:attribute name="mapMarkers" type="Object[]" default="[]"/>
+    <aura:attribute name="zoomLevel" type="Integer" default="15"/>
+    <aura:attribute name="openModalFlag" type="Boolean" default="False"/>
+
+    <!-- handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.fnInit}"/>
+
+
+    <div class="slds-grid slds-wrap slds-theme_default gm-area">
+
+        <!-- 좌측 Area -->
+        <div class="slds-col slds-size_3-of-12 gm-area">
+            <div class="slds-p-around_medium slds-border_right slds-scrollable_y">
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <lightning:button label="Go Account" iconName="utility:add" onclick="{!c.goAccount}" />
+                        <lightning:button label="Add Marker" iconName="utility:add" onclick="{!c.addMarker}"/>
+                        <lightning:button label="Do Modal" iconName="utility:up" onclick="{!c.openModal}"/>
+                    </div>
+                </div>
+
+                <ul class="slds-coordinates__list gm-ul">
+                    <aura:iteration items="{!v.mapMarkers}" var="item">
+                        <li class="slds-coordinates__item" onclick="{!c.taskClick}" data-marker-Id="{!item.value}">
+                            <span class="slds-assistive-text" aria-live="polite"></span>
+                            <lightning:button class="slds-coordinates__item-action slds-button_reset slds-media">
+                                <span class="slds-media__figure" style="background-color:red;width:2rem;height:2rem;">
+                                    <span class="slds-icon_container slds-icon-standard-account" title="Description of icon when needed" style="background-color:red;">
+<!--                                        <lightning:icon iconName="custom:custom1" alternativeText="Account" title="Account" />-->
+<!--                                        <span class="slds-assistive-text">Description of icon when needed</span>-->
+                                    </span>
+                                </span>
+                                <span class="slds-media__body">
+                                    <span class="slds-text-link">{!item.Subject}</span>
+                                    <span>{!item.Description}</span>
+                                </span>
+                            </lightning:button>
+                        </li>
+                    </aura:iteration>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 우측 Area -->
+        <div class="slds-col slds-size_9-of-12 gm-area">
+            <!-- the map component -->
+            <lightning:map mapMarkers="{!v.mapMarkers}"
+                           markersTitle="{!v.markersTitle}"
+                           options="{!v.mapOptions}"
+                           center="{!v.mapCenter}"
+                           zoomLevel="{!v.zoomLevel}"
+                           onmarkerselect="{!c.handleMarkerSelect}"
+                           showFooter="False"
+                           listView="hidden"/>
+        </div>
+    </div>
+
+    <aura:if isTrue="{!v.openModalFlag}">
+        <div class="slds-m-around_xx-large">
+
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModal}"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Task</h2>
+                    </header>
+
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <lightning:input label="Title" name="title" type="text"/>
+                        <lightning:input label="Start Date" name="start" type="text"/>
+                        <lightning:input label="End Date" name="end" type="text"/>
+                    </div>
+
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" label="OK" title="OK"/>
+                        <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{!c.closeModal}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+</aura:component>
