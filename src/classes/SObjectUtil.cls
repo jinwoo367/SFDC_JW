@@ -10,7 +10,7 @@
 public with sharing class SObjectUtil {
 
     /**
-     * @param sObjectName
+     * @param sObjectName SObject 명
      * @description SObject 내에 있는 모든 필드 정보를 가져온다.
      *
      * @return  Map<String, Map<String, Object>>
@@ -43,7 +43,7 @@ public with sharing class SObjectUtil {
     }
 
     /**
-     * @param sObjectName
+     * @param sObjectName SObject 명
      * @description SObject 내에 있는 모든 필드 중 타입이 "PickList"인 정보를 가져온다.
      *
      * @return Map<String, List<Map<String, String>>>
@@ -70,8 +70,8 @@ public with sharing class SObjectUtil {
     }
 
     /**
-     * @param sObjectName
-     * @param fieldName
+     * @param sObjectName SObject 명
+     * @param fieldName Field 명
      * @description SObject 내의 하나의 필드의 "PickList" 정보를 가져온다.
      *
      * @return List<Map<String, String>>
@@ -93,7 +93,7 @@ public with sharing class SObjectUtil {
     }
 
     /**
-     * @param sObjectName
+     * @param sObjectName SObject 명
      * @description SObject 내에 있는 모든 필드 중 타입이 "PickList"인 정보를 가져온다.
      *
      * @return Map<String, List<String>>
@@ -120,8 +120,8 @@ public with sharing class SObjectUtil {
     }
 
     /**
-     * @param sObjectName
-     * @param fieldName
+     * @param sObjectName SObject 명
+     * @param fieldName Field 명
      * @description SObject 내의 하나의 필드의 "PickList" 정보를 가져온다.
      *
      * @return List<String>

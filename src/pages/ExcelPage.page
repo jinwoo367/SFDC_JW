@@ -1,0 +1,84 @@
+<!--
+ - Created by JWJANG on 2023-02-21.
+ -->
+
+<apex:page id="ExcelPage" controller="ExcelImportController" showHeader="false" sidebar="false" >
+    <apex:includeScript value="{!$Resource.excelExport}"/>
+    <apex:includeScript value="{!$Resource.JQuery}"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <style type="text/css">
+        #center { position:absolute; top:50%; left:50%; width:400px; height:200px; overflow:hidden; margin-top:-200px; margin-left:-100px;}
+        .div {display:table; width:300px; height:200px;}
+        .p {display:table-cell; text-align:center; vertical-align:middle;}
+        .font-large{font-size: large;}
+    </style>
+    <script type="text/javascript">
+        console.log('excelPage');
+        var listField = [];
+        var listData = [];
+        var j$ = jQuery.noConflict();
+
+        j$(document).ready(function(){
+            tablesToExcel('{!strTemplateName}' + '_Template', listField, listData);
+        });
+
+        function goBack(){
+            var url = location.href;
+            var baseURL = url.substring(0, url.indexOf('/', 14));
+            console.log('baseURL : ' + baseURL);
+            location.href = '/lightning/n/Tab';
+            //history.back('lightning/n/ExcelUpload');
+        }
+
+        var showTabId = function showTabId(result) {
+            // Display the tab ID
+            console.log ('Tab ID: ' + result.id);
+            sforce.console.closeTab(result.id);
+        };
+        sforce.console.getFocusedSubtabId(showTabId);
+
+
+        var clearNum = 1;
+        var myTimer = setInterval(function(){
+
+            clearNum--;
+            console.log(clearNum);
+
+            j$("#checker").text(clearNum);
+
+            if(clearNum == 0) {
+                clearInterval(myTimer);
+                goBack();
+            }
+        }, 1000);
+
+    </script>
+    <apex:form >
+        <div id="center" class="div">
+            <!--<span id="checker"></span>-->
+            <!--<a href="javascript:void(0);" onclick="goBack()">엑셀업로드로 돌아가기</a>-->
+        </div>
+    </apex:form>
+    <script>
+    //첫번째 필드로 Id값은 무조건 넣어주어야 함
+        listField.push({
+            fAPIName:'번호',
+            fLabel:'Id',
+            fType:'text',
+            fSample:''
+        });
+        console.log(listField);
+    </script>
+
+    <apex:repeat value="{!listExcelFields}" var="obj">
+        <script>
+            listField.push({
+                fAPIName:'{!obj.fLabel}',
+                fLabel:'{!obj.fAPIName}',
+                fType:'text',
+                fSample:'{!obj.fSample}'
+            });
+            console.log(listField);
+        </script>
+    </apex:repeat>
+</apex:page>

@@ -1,8 +1,7 @@
 <!--
  - Created by JWJANG on 2023-01-02.
  -->
-
-<apex:page id="googleMap_vf" controller="GoogleMap_vfController" sideBar="true" action="{!getInitData}">
+<apex:page id="GoogleMap_vf" controller="GoogleMap_vfController" sideBar="true" action="{!getInitData}">
     <head>
         <style>
             #map {

@@ -1,0 +1,105 @@
+<!--************************************************************************************
+ * Description :
+ *
+ * Ver      Date           Author          Modification
+ * ===================================================================================
+   1.0      2021-10-21     yr.lee          Create
+*************************************************************************************-->
+
+<aura:component controller="ExcelImportController" description="ExcelImportHelper" implements="force:hasRecordId,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome" access="global" >
+    <ltng:require scripts="{!join(',', $Resource.JQuery, $Resource.excelExport)}" afterScriptsLoaded="{!c.init}" />
+
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <!-- attributes -->
+    <aura:attribute name="data" type="List"/>
+    <aura:attribute name="dataTableYn" type="boolean" default="false"/>
+    <aura:attribute name="toggleSpinner" type="Boolean"  default="false"/>
+    <aura:attribute name="selectedRows" type="List"/>
+    <aura:attribute name="options" type="List" />
+    <aura:attribute name="rowCount" type="String" />
+    <aura:attribute name="isFinish" type="Boolean"  default="false"/>
+
+    <!--DataTable-->
+    <aura:attribute name="FailedData" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+
+    <aura:attribute name="flagSaveButton" type="Boolean" default="true"/>
+    <aura:attribute name="flagSaveStart" type="Boolean" default="false"/>       <!-- Data Save Start Flag-->
+    <aura:attribute name="intDMLSuccessCount" type="Integer" default="0"/>      <!-- DML Success Record Count -->
+    <aura:attribute name="intProgressBarValue" type="Integer" default="0"/>     <!-- Progress Bar Percent Value -->
+    <aura:attribute name="intThreadMaxCount" type="Integer" default="10"/>       <!-- Thread 최대 개수 -->
+    <aura:attribute name="intThreadNowCount" type="Integer" default="0"/>       <!-- 현재 수행중인 Thread 개수 -->
+    <aura:attribute name="intProcessCount" type="Integer" default="50"/>       <!-- 하나의 Thread 가 처리하는 Record Count-->
+    <aura:attribute name="intSelectTargetObject" type="Integer" default="-1"/>       <!-- 대상 Object -->
+    <aura:attribute name="strSelectTargetObject" type="String" default=""/>       <!-- 대상 Object API -->
+    <aura:attribute name="strTemplateName" type="String" default=""/>       <!-- 대상 Template Name -->
+    <aura:attribute name="isDiffObject" type="boolean" default="false"/>
+
+    <aura:if isTrue="{!v.toggleSpinner}">
+        <lightning:spinner variant="brand" size="medium" />
+    </aura:if>
+
+    <lightning:layout>
+        <lightning:layoutItem size="6">
+            <div class="slds-grid">
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning:select name="select" aura:id="select" variant="label-hidden" onchange="{!c.fnChange}">
+                        <option value="-" selected="true">--------------템플릿 명---------------</option>
+                        <aura:iteration items="{!v.options}" var="option" indexVar="i">
+                            <option text="{!option}" value="{!option}" />
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <div class="slds-col">
+                    <aura:if isTrue="{!v.strSelectTargetObject.length > 0}">
+                        <c:DN_CommonExcelRead excelData="{!v.data}" strObject="{!v.strSelectTargetObject}" intDMLSuccessCount="{!v.intDMLSuccessCount}" intThreadNowCount="{!v.intThreadNowCount}"/>
+                    </aura:if>
+                </div>
+            </div>
+        </lightning:layoutItem>
+
+        <aura:if isTrue="{!v.flagSaveButton}">
+            <lightning:layoutItem size="6">
+                <div class="slds-float_right" style="margin-top:18px;">
+                    <lightning:buttonGroup>
+                        <lightning:button variant="destructive" label="양식 다운로드" title="export" onclick="{!c.fnExport}"/>
+                        <lightning:button variant="brand" label="저장" title="save" onclick="{!c.fnSave}"/>
+                    </lightning:buttonGroup>
+                </div>
+            </lightning:layoutItem>
+        </aura:if>
+    </lightning:layout>
+
+    <div style="font-weight:bold">
+        *양식 다운로드 후 반드시 다른이름으로 저장하여 '.xlsx' 확장자로 저장해주세요. (바로 저장시, 업로드에 문제생길 수 있습니다.)<br/>
+        *Update시, 데이터가 빈칸이면 지워지지 않고 기존데이터가 유지됩니다. 지우고 싶을 경우, <span style="font-weight:bold;color:red">'NULL'</span> 혹은
+        <span style="font-weight:bold;color:red">'Null'</span> 혹은 <span style="font-weight:bold;color:red">'null'</span>을 입력해주세요(작은따옴표 제외하고 입력).
+    </div>
+
+    <lightning:layout>
+        <aura:if isTrue="{!v.flagSaveStart}">
+            <lightning:layout>
+                <lightning:layoutItem size="6" padding="around-small">
+                    <c:ExcelImportProgressPop progressValue="{!v.intProgressBarValue}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="6" padding="around-small">
+                    <lightning:spinner variant="brand" size="medium" />
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:if>
+    </lightning:layout>
+
+    <!-- Data Table -->
+    <aura:if isTrue="{!v.isFinish}">
+        <span style="font-size:20px; color: red">Failed Data:<br/></span>
+
+            <lightning:datatable
+                    keyField="ErrorNumber"
+                    data="{!v.FailedData}"
+                    columns="{!v.columns}"
+                    onsave="{!c.handleSave}"
+                    draftValues="{!v.draftValues}"
+                    hideCheckboxColumn="true"/>
+
+    </aura:if>
+</aura:component>

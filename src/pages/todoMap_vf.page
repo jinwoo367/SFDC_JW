@@ -1,0 +1,168 @@
+<!--
+ - Created by JWJANG on 2023-01-02.
+ -->
+
+<apex:page id="todoMap_vf" controller="TodoMap_vfController" sideBar="true">
+    <head>
+        <style>
+            #map {
+                font-family: Arial;
+                font-size: 12px;
+                line-height: normal !important;
+                width:100%;
+                height: 700px;
+                background: transparent;
+            }
+        </style>
+        <apex:includeScript value="https://maps.googleapis.com/maps/api/js?key=AIzaSyBR98bruTJ9WPUmYW4qr9bPvrBUVdWV90c&libraries=places&sensor=false"/>
+        <apex:includeScript value="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"/>
+        <script type="text/javascript">
+            var map;
+            var markerArr = [];
+            var markerInfoArr = [];
+            var geocoder = new google.maps.Geocoder();
+
+            $(document).ready(function() {
+                initMap();
+
+                drawProcess();
+            });
+
+            window.addEventListener("message", function(event) {
+                // Handle message
+                var data = JSON.parse(event.data);
+                console.log(data);
+
+                if(data.type == 'searchList') {
+                    document.getElementById('{!$Component.form.varSearchDate}').value = data.searchDate;
+                    document.getElementById('{!$Component.form.varSearchCondition}').value = data.searchCondition;
+                    document.getElementById('{!$Component.form.varSearchUser}').value = data.searchUser;
+
+                    clearMarker();
+                    doGetInitData();
+                } else if(data.type == 'clickMarker') {
+                    var markerInfo = markerInfoArr.find(ele => ele.objId == data.recordId);
+                    map.setCenter({lat : markerInfo.lat, lng : markerInfo.lng});
+                }
+            }, false);
+
+            function drawProcess() {
+                markerInfoArr = JSON.parse(document.getElementById('{!$Component.form.varMarkersStr}').value);
+                console.log(markerInfoArr);
+
+                if(markerInfoArr.length > 0) {
+                    // Marker 추가
+                    markerInfoArr.forEach(markerInfo => {
+                        if(markerInfo.lat != null && markerInfo.lng != null) {
+                            drawMarker(markerInfo);
+                        }
+                    });
+
+                    // Center 설정
+                    markerInfoArr.forEach(markerInfo => {
+                        if(markerInfo.lat != null && markerInfo.lng != null) {
+                            map.setCenter({lat : markerInfo.lat, lng : markerInfo.lng});
+                            return false;
+                        }
+                    });
+                }
+            }
+
+            // Map Initialize
+            function initMap() {
+                console.log("initMap");
+
+                var mapCenter = JSON.parse(document.getElementById('{!$Component.form.varCenterStr}').value);
+                var myOptions = {
+                    zoom: 14,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: false,
+                    center : {lat : mapCenter.lat, lng : mapCenter.lng}
+                }
+
+                // Create map
+                map = new google.maps.Map(document.getElementById("map"), myOptions);
+            }
+
+            // Create Marker
+            function drawMarker(markerInfo) {
+                var marker = new google.maps.Marker({
+                    position: {lat : markerInfo.lat, lng : markerInfo.lng},
+                    map: map,
+                    label: {
+                        text: markerInfo.label,
+                        color: 'white'
+                    },
+                    title: markerInfo.Subject,
+                    draggable: false
+                });
+
+                const contentString =
+                    '<div id="content">' +
+                    '    <div id="siteNotice"></div>' +
+                    '    <h1 id="firstHeading" class="firstHeading">' + markerInfo.Subject + '(' + markerInfo.objectName + ')</h1>' +
+                    '    <div id="bodyContent">' +
+                    '        <p>기한 : ' + markerInfo.dueDate + '</p><br>' +
+                    '        <p><b>Location</b></p>' +
+                    '        <p>위도 : ' + markerInfo.lat + '</p>' +
+                    '        <p>경도 : ' + markerInfo.lng + '</p><br>' +
+                    '        <p><a href="' + markerInfo.url + '" target="_blank">상세 화면으로 이동</a></p>' +
+                    '    </div>' +
+                    '</div>';
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: contentString,
+                    ariaLabel: markerInfo.Subject
+                });
+
+                marker.addListener("click", () => {
+                    infoWindow.open({
+                        anchor: marker,
+                        map
+                    });
+                });
+                markerArr.push(marker);
+
+                // Marker Index 설정
+                markerInfoArr[markerInfoArr.indexOf(markerInfo)].markerIdx = markerArr.length - 1;
+            }
+
+            function clearMarker() {
+                markerArr.forEach(marker => {
+                    marker.setMap(null);
+                });
+
+                markerArr = [];
+            }
+
+            // ??
+            function resizeIframe() {
+                var me = window.name;
+                if (me) {
+                    var iframes = parent.document.getElementsByName(me);
+                    if (iframes && iframes.length == 1) {
+                        height = document.body.offsetHeight;
+                        iframes[0].style.height = height + "px";
+                    }
+                }
+            }
+        </script>
+    </head>
+
+    <apex:form id="form">
+        <apex:inputHidden id="varCenterStr" value="{!mapCenterStr}"/>
+        <apex:inputHidden id="varMarkersStr" value="{!mapMarkersStr}"/>
+
+        <apex:inputHidden id="varSearchDate" value="{!searchDate}"/>
+        <apex:inputHidden id="varSearchCondition" value="{!searchCondition}"/>
+        <apex:inputHidden id="varSearchUser" value="{!searchUser}"/>
+
+        <apex:actionFunction id="funcForm" name="doGetInitData" action="{!getInitData}" onComplete="drawProcess();" reRender="varMarkersStr"/>
+    </apex:form>
+
+    <body>
+        <div>
+            <div id="map"></div>
+        </div>
+    </body>
+</apex:page>

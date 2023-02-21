@@ -1,0 +1,245 @@
+<!--
+ - Created by JWJANG on 2023-01-27.
+ -->
+
+<apex:page id="QCReportPage"
+           controller="QCReportPageController"
+           standardStylesheets="false"
+           applyBodyTag="false"
+           applyHtmlTag="false"
+           sidebar="false"
+           showHeader="false"
+           contentType="text/html;charset=UTF-8"
+           renderAs="pdf">
+
+    <html>
+        <head>
+            <style type="text/css">
+                @page {
+                    size: a4;
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial Unicode MS;
+                    font-size: 11px;
+                    width: 100%;
+                    height: 100%;
+                }
+
+                body {
+                    margin: 5px;
+                    padding: 0;
+                    text-align: center;
+                    font-family: Arial Unicode MS;
+                }
+
+                .tb {
+                    border-collapse:collapse;
+                    border-spacing:0;
+                    margin:0px auto;
+                    width:100%;
+                    table-layout: fixed;
+                }
+
+                .tb th {
+                    border: 1px solid black;
+                    font-size:11px;
+                    text-align:center;
+                    vertical-align:middle;
+                    overflow:hidden;
+                    padding:5px 5px;
+                    word-break:normal;
+                    width: 40px;
+                    height: 38px;
+                    table-layout: fixed;
+                }
+
+                .tb td {
+                    border: 1px solid black;
+                    font-size:11px;
+                    overflow:hidden;
+                    padding:5px 5px;
+                    word-break:break-word;
+                    width: 40px;
+                    height: 38px;
+                    table-layout: fixed;
+                }
+            </style>
+        </head>
+        <body>
+            <div>
+                <table class="tb">
+                    <tbody>
+                    <tr>
+                        <th colspan="6" rowspan="4" style="font-size: 30px;">QC(Service) Report</th>
+                        <th colspan="2" rowspan="2" style="border-bottom-width:0px;">Write</th>
+                        <th colspan="2" rowspan="2" style="border-bottom-width:0px;">Review</th>
+                        <th colspan="2" rowspan="2" style="border-bottom-width:0px;">Approval</th>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <th colspan="2" rowspan="2">Galip Keles</th>
+                        <th colspan="2" style="border-bottom-width:0px;">&nbsp;</th>
+                        <th colspan="2" rowspan="2">김한기</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="border-top-width:0px;">&nbsp;</th>
+                    </tr>
+
+                    <tr>
+                        <th colspan="2" style="border-bottom-width:0px;">Country /</th>
+                        <td colspan="6">a</td>
+                        <th>MODEL</th>
+                        <td colspan="3">a</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="border-top-width:0px;">Company(Clinic)</th>
+                        <td colspan="6"></td>
+                        <th>S/N</th>
+                        <td colspan="3">a</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Classification</th>
+                        <td colspan="2" style="border-right-width : 0px;">A/S (&nbsp;&nbsp;<span>TRUE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="2" style="border-right-width : 0px; border-left-width : 0px;">B/S (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="3" style="border-right-width : 0px; border-left-width : 0px;">Return and After (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="3" style="border-left-width : 0px;">Issuance of CAPA (<span>refer the below</span>)</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" rowspan="2">Issue Date</th>
+                        <td colspan="3" rowspan="2">
+                            <!--
+                            <apex:outputText value="{0, date, yyyy'-'MM'-'d}">
+                                <apex:param value="a" />
+                            </apex:outputText>
+                            -->
+                        </td>
+                        <th colspan="2" rowspan="2">The Person In charge</th>
+                        <td colspan="2" rowspan="2">Galip Keles</td>
+                        <th colspan="1" rowspan="2">T-Pulse</th>
+                        <td colspan="2" rowspan="2">&nbsp;</td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <th colspan="2" rowspan="2">Manufacturing Date</th>
+                        <td colspan="3" rowspan="2">
+                            <!--
+                            <apex:outputText value="{0, date, yyyy'-'MM'-'d}">
+                                <apex:param value="a" />
+                            </apex:outputText>
+                            -->
+                        </td>
+                        <th colspan="2" rowspan="2">Operation Time</th>
+                        <td colspan="2" rowspan="2">&nbsp;</td>
+                        <th colspan="1" rowspan="2">L-Pulse</th>
+                        <td colspan="2" rowspan="2">&nbsp;</td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <th colspan="2">Issue (Symptom)</th>
+                        <td colspan="10" style="text-align:left;">a</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Cause &amp; Request</th>
+                        <td colspan="10" style="text-align:left;">a</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Category</th>
+                        <td colspan="10">Processing contents</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" rowspan="2">Processing results</th>
+                        <td colspan="10" style="text-align:left;"><b>After replacing the cartridge, the equipment is normal operation</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">&nbsp;</td>
+                        <td colspan="2" style="border-right-width: 0px; text-align:right;">Amount : </td>
+                        <td colspan="2" style="border-right-width: 0px; border-left-width: 0px; text-align:left;">$&nbsp;&nbsp;&nbsp;<b>free</b></td>
+                        <td>(Sign)</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Info. Evaluation</th>
+                        <td colspan="3" style="border-right-width: 0px;">Customer Complaints (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="3" style="border-right-width: 0px; border-left-width: 0px;">Simple Measures (&nbsp;&nbsp;<span>TRUE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="3" style="border-right-width: 0px; border-left-width: 0px;">Reporting Measures (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td style="border-left-width: 0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" rowspan="3">Validation Check</th>
+                        <td colspan="3" style="border-right-width: 0px;">Issuace of CAPA (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="3" style="border-right-width: 0px; border-left-width: 0px;">CAPA N/A (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="3" style="border-right-width: 0px; border-left-width: 0px;">Correction Unable (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td style="border-left-width: 0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="border-right-width: 0px;">Hazardous Cases Reporting Measures (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="5" style="border-left-width: 0px;">Inapplicable (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="border-right-width: 0px;">Potential Danger of Accident (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="4" style="border-right-width: 0px; border-left-width: 0px;">Side Effect, Abnormality-Case (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                        <td colspan="2" style="border-left-width: 0px;">N/A (&nbsp;&nbsp;<span>FALSE</span>&nbsp;&nbsp;)</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" rowspan="4">Equipment Held B/S history</th>
+                        <th colspan="3">S/N</th>
+                        <th colspan="2">Time</th>
+                        <th colspan="1">T-pulse</th>
+                        <th colspan="4">Result</th>
+                    </tr>
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                        <td colspan="2">&nbsp;</td>
+                        <td colspan="1">&nbsp;</td>
+                        <td colspan="4">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                        <td colspan="2">&nbsp;</td>
+                        <td colspan="1">&nbsp;</td>
+                        <td colspan="4">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                        <td colspan="2">&nbsp;</td>
+                        <td colspan="1">&nbsp;</td>
+                        <td colspan="4">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" rowspan="6">Picture of Information</th>
+                        <td colspan="10" style="border-bottom-width:0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="10" style="border-bottom-width:0px;border-top-width:0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="10" style="border-bottom-width:0px;border-top-width:0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="10" style="border-bottom-width:0px;border-top-width:0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="10" style="border-bottom-width:0px;border-top-width:0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="10" style="border-top-width:0px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Inspector</th>
+                        <td colspan="4">DATE :&nbsp;&nbsp;&nbsp;&nbsp;<b>2022-05-23</b></td>
+                        <td colspan="4">Name :&nbsp;&nbsp;&nbsp;&nbsp;<b>Galip Keles</b></td>
+                        <td colspan="2"><I>?</I></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="tb">
+                    <tbody>
+                        <tr>
+                            <td style="text-align:left; border-width: 0px;">WTF-802-03(Rev.0)</td>
+                            <td style="text-align:right; border-width: 0px;">WON TECH Co., Ltd.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </body>
+    </html>
+</apex:page>

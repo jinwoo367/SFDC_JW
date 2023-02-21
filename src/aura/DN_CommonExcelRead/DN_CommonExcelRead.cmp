@@ -1,0 +1,55 @@
+<!-- ***********************************************************************************
+* File Name   		: DN_CommonExcelRead.cmp
+* Description 		: Excel File Read 읽은 후 JSON 으로 데이터를 변환 한다.
+* Modification Log
+* Ver      Date            Author          Modification
+* ===================================================================================
+  1.0      2021.08.31      yr.lee          Create
+************************************************************************************ -->
+<aura:component implements="force:hasRecordId,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:appHostable,force:hasSObjectName,flexipage:availableForRecordHome,lightning:actionOverride" access="global">
+    <!-- Static Resources -->
+    <!--<ltng:require scripts = "{!$Resource.common_xlsx}"/>-->
+    <ltng:require scripts="{!join(',', $Resource.common_jszip, $Resource.common_xlsx)}"/>
+
+    <!-- Init Function -->
+    <aura:handler name="init" value="{!this}" action="{!c.fnInit}"/>
+
+    <!-- Attributes -->
+    <aura:attribute name="FileList" type="Object"/>
+    <aura:attribute name="FileName" type="String"/>
+    <aura:attribute name="readData" type="List"/>
+    <aura:attribute name="excelData" type="List"/>
+    <aura:attribute name="toggleSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="listHeader" type="List" description="Excel Read 시 Return 되는 Header Key 목록"/>
+    <aura:attribute name="readDataRow" type="Integer" default="2" description="Data 값으로 인지할 행의 Row [Start:0]"/>
+    <aura:attribute name="readSheetIndex" type="Integer" default="0" description="찾고자 하는 Sheet Index [Start:0]"/>
+    <aura:attribute name="strObject" type="String"/>
+    <aura:attribute name="intDMLSuccessCount" type="Integer" default="0"/>
+    <aura:attribute name="intThreadNowCount" type="Integer" default="0"/>
+    <aura:attribute name="excelIsEmpty" type="Boolean" default="true"/>
+
+    <aura:if isTrue="{!v.toggleSpinner}">
+        <lightning:spinner variant="brand" size="medium" />
+    </aura:if>
+
+    <!-- Body -->
+    <div class="slds-button-group slds-align_absolute-center">
+        <div style="margin-top:18px;">
+            <lightning:input aura:id="file-input" type="file" files="{!v.FileList}"
+                             label="Files" accept=".xls, .xlsx" name="file" multiple="false"
+                             onchange="{!c.fnExcelUpload}" variant="label-hidden"/>
+        </div>
+
+        <!--사용자가 Object를 바꿨을시, 파일명 리셋-->
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="slds-box slds-box_x-small" style="margin-top:18px">
+            <aura:if isTrue="{!empty(v.excelData)}">
+                &nbsp;Upload File :
+            </aura:if>
+            <aura:if isTrue="{!not(empty(v.excelData))}">
+                &nbsp;Upload File : <ui:outputText value="{!v.FileName}"/>
+            </aura:if>
+        </div>
+    </div> 
+
+</aura:component>

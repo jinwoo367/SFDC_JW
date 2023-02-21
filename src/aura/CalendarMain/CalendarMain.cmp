@@ -1,0 +1,358 @@
+<!--
+ - Created by sjhyk on 2023-01-04.
+ -->
+
+
+<aura:component description="CalendarMain"
+                controller="ManagedCalenderMainController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome">
+
+    <aura:attribute name="listOpportunityStage" type="String" default="false"/>   <!--Stage List-->
+    <aura:attribute name="SelectedStage" type="String"/>   <!--Opportunity Stage-->
+    <aura:attribute name="OpportunityUser" type="String"/>   <!--영업 담당자 이름-->
+    <aura:attribute name="OpportunityUserId" type="String"/>   <!--영업 담당자 Id-->
+    <aura:attribute name="selectedId" type="String"/>   <!--고객 조회 Parameter-->
+    <aura:attribute name="SearchOppList" type="List"/>   <!--조회된 리스트-->
+    <aura:attribute name="isSearch" type="Boolean" default="false"/>   <!--조회 여부-->
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+
+    <aura:attribute name="rbOptions" type="List" default="[]"/>     <!--조회 목록 선택 option-->
+    <aura:attribute name="rbSelectedValue" type="String" default="Opportunity"/>     <!--조회 목록 선택 value-->
+    <aura:attribute name="SelectedIndustry" type="String" />   <!--Account Industry-->
+    <aura:attribute name="listAccountIndustry" type="String" default="false"/>   <!--Industry List-->
+    <aura:attribute name="SearchAccountList" type="List"/>   <!--조회된 리스트-->
+
+    <aura:handler name="init" action="{!c.fnInit}" value="{!this}"/>
+    <aura:handler event="force:navigateToSObject" action="{!c.navigateToRecord}"/>
+
+    <!--<ltng:require styles="{!$Resource.slds_page_header_hide}" />-->
+
+
+    <!--Header [S]-->
+    <!--<lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" padding="around-small">
+            <div class="slds-page-header">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning:icon iconName="standard:event" />
+                    </div>
+                    <div class="slds-media__body">
+                        <lightning:layout>
+                            <lightning:layoutItem size="7">
+                                <p class="slds-text-body_small slds-line-height_reset" style="padding-bottom: 0.5vh;">Account Calendar</p>
+                                <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="활동 관리">계정 활동 관리</h1>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                </div>
+            </div>
+        </lightning:layoutItem>
+    </lightning:layout>-->
+    <!--Header [E]-->
+
+    <aura:if isTrue="{!v.showSpinner == true}">
+        <div class="slds-page-header__title slds-m-right--smalls slds-align-middle fade-text">
+            <lightning:spinner variant="brand" alternativeText="Loading" size="medium"/>
+        </div>
+    </aura:if>
+
+    <aura:iteration items="1,2,3,4,5" var="item">
+        <lightning:layout></lightning:layout>
+    </aura:iteration>
+
+    <lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" padding="around-small">
+            <div class="slds-media">
+                <div class="slds-media__body" style="padding-bottom: 40px;">
+                    <lightning:layout>
+                        <lightning:layoutItem size="12">
+                            <div class="slds-card">
+                                <div class="slds-p-around_x-small">
+
+                                    <div class="slds-media ">
+                                        <div class="slds-media__figure">
+                                            <lightning:icon iconName="custom:custom18"/>
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <lightning:layout multipleRows="true">
+                                                <lightning:layoutItem size="">
+                                                    <p class="slds-text-body_small slds-line-height_reset"
+                                                       style="padding-bottom: 0.5vh;">List</p>
+                                                    <h1 class="slds-page-header__controls slds-truncate slds-align-middle"
+                                                        title="목록">Account 목록 조회</h1>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem size="" alignmentBump="left">
+                                                    <lightning:button variant="brand" label="조회"
+                                                                      onclick="{!c.fnSearch}"/>
+                                                </lightning:layoutItem>
+                                            </lightning:layout>
+                                        </div>
+                                    </div>
+
+                                    <lightning:layoutItem size="6" padding="horizontal-small">
+                                        <lightning:radioGroup name="조회목록선택"
+                                                              label="조회 목록 선택"
+                                                              options="{!v.rbOptions}"
+                                                              value="{!v.rbSelectedValue}"
+                                                              type="radio"
+                                                              onchange="{!c.fnSelectObj}"
+                                                              required="true"/>
+                                    </lightning:layoutItem>
+
+                                    <aura:if isTrue="{!v.rbSelectedValue == 'Opportunity'}">
+                                        <lightning:layout multipleRows="true" class="slds-p-top_small">
+                                            <lightning:layoutItem size="6" padding="horizontal-small">
+                                                <div class="slds-form-element">
+                                                    <lightning:select label="Category" name="select1" aura:id="Category"
+                                                                      onchange="{!c.fnSelectCategory}">
+                                                        <!--onchange="{!c.fnSelectCategory}"-->
+                                                        <option value="">choose one...</option>
+                                                        <aura:iteration items="{!v.listOpportunityStage}" var="s"
+                                                                        indexVar="idx">
+                                                            <option value="{!s.value}" text="{!s.label}"
+                                                                    label="{!s.label}"
+                                                                    id="categoryOption"/>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                </div>
+                                            </lightning:layoutItem>
+
+                                            <lightning:layoutItem size="6" padding="horizontal-small">
+                                                <div class="slds-form-element">
+                                                    <lightning:input value="{!v.OpportunityUser}" label="영업 담당자"
+                                                                     disabled="true"/>
+                                                </div>
+                                            </lightning:layoutItem>
+
+                                            <lightning:layoutItem size="12" padding="horizontal-small">
+                                                <c:lookupField
+                                                        objectAPIName="Account"
+                                                        label="Relate to"
+                                                        returnFields="['Name','Phone','Website']"
+                                                        queryFields="['Name','Phone','Website']"
+                                                        selectedId="{!v.selectedId}"
+                                                        MaxResults="5"
+                                                        filter="CreatedDate > 2001-01-01T00:00:01Z"
+                                                />
+                                            </lightning:layoutItem>
+                                            <!--<lightning:layoutItem size="6" padding="horizontal-small" >
+                                                <lightning:recordEditForm objectApiName="Account">
+                                                    <lightning:inputField aura:id="OwnerId" fieldName="OwnerId" /> &lt;!&ndash;onchange="{!c.updatePersonInfo}"&ndash;&gt;
+                                                </lightning:recordEditForm>
+                                            </lightning:layoutItem>-->
+
+
+                                            <!--            발신번호-->
+
+                                        </lightning:layout>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.rbSelectedValue == 'Account'}">
+                                        <lightning:layout multipleRows="true" class="slds-p-top_small">
+                                            <lightning:layoutItem size="6" padding="horizontal-small">
+                                                <div class="slds-form-element">
+                                                    <lightning:select label="Industry" name="select1" aura:id="Industry"
+                                                                      onchange="{!c.fnSelectIndustry}">
+                                                        <option value="">choose one...</option>
+                                                        <aura:iteration items="{!v.listAccountIndustry}" var="s"
+                                                                        indexVar="idx">
+                                                            <option value="{!s.value}" text="{!s.label}"
+                                                                    label="{!s.label}"
+                                                                    id="industryOption"/>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                </div>
+                                            </lightning:layoutItem>
+
+                                            <lightning:layoutItem size="6" padding="horizontal-small">
+                                                <div class="slds-form-element">
+                                                    <lightning:input value="{!v.OpportunityUser}" label="영업 담당자"
+                                                                     disabled="true"/>
+                                                </div>
+                                            </lightning:layoutItem>
+
+                                            <lightning:layoutItem size="12" padding="horizontal-small">
+                                                <c:lookupField
+                                                        objectAPIName="Opportunity"
+                                                        label="Relate to"
+                                                        returnFields="['Name','StageName']"
+                                                        queryFields="['Name','StageName']"
+                                                        selectedId="{!v.selectedId}"
+                                                        filter="CreatedDate > 2001-01-01T00:00:01Z"
+                                                />
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                    </aura:if>
+
+                                    <!--<lightning:recordEditForm objectApiName="Account">
+                                        <lightning:layout multipleRows="true">
+                                            <lightning:layoutItem size="6" class="slds-p-top_xx-small slds-p-horizontal_x-small">
+                                                <lightning:inputField fieldName="Rating"/>
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem size="6" class="slds-p-top_xx-small slds-p-horizontal_x-small">
+                                                <lightning:inputField fieldName="Ownership"/>
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                    </lightning:recordEditForm>-->
+                                </div>
+                            </div>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </div>
+
+            <!--조회 리스트-->
+            <aura:if isTrue="{!v.rbSelectedValue == 'Opportunity'}">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12">
+                        <aura:if isTrue="{!v.isSearch == true}">
+                            <aura:iteration items="{!v.SearchOppList}" var="obj" indexVar="dataIdx">
+                                <div class="slds-card" data-id="{!obj.OppId}" data-lat="{!obj.lat}" data-lng="{!obj.lng}">
+                                    <div class="slds-p-around_x-small">
+                                        <lightning:tile label="">
+                                            <a href="{!obj.url}" target="_blank">{!obj.Name}</a>
+                                            <lightning:buttonIcon class="slds-float_right"
+                                                                  iconName="utility:record_create"
+                                                                  alternativeText="이벤트 생성" title="이벤트 생성"
+                                                                  onclick="{!c.fnCreateEvent}" aura:id="{!obj.OppId}"/>
+                                            <lightning:buttonIcon class="slds-float_right" iconName="utility:search"
+                                                                  alternativeText="더보기" title="더보기"
+                                                                  onclick="{! c.navigateToRecord }"
+                                                                  aura:id="{!obj.OppId}"/>
+                                            <!--label="{!obj.Name}" href="{!obj.url}"-->
+
+
+                                            <!--<lightning:card title="{!obj.Name}" actions="">
+                                                <aura:set attribute="actions">
+                                                    <lightning:button label="New Event"/>
+                                                </aura:set>
+                                            </lightning:card>-->
+
+                                            <!--<div aura:id="divId" onclick="{!c.fnCreateEvent}" aria-label="tttt">
+                                            </div>-->
+                                            <aura:set attribute="media">
+                                                <lightning:icon iconName="standard:groups"/>
+
+                                            </aura:set>
+
+                                            <dl class="slds-dl_horizontal">
+                                                <!--<dt class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p class="slds-truncate" title="보험 계약 이름">보험 계약 : {!obj.Name}</p>
+                                                </dt>
+                                                <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p class="slds-truncate" title="금액">
+                                                        <lightning:formattedNumber value="{!obj.Amount}"
+                                                                                   style="currency"
+                                                                                   currencyCode="KOR"
+                                                                                   currencyDisplayAs="name"
+                                                                                   minimumFractionDigits="0"/>
+                                                    </p>
+                                                    &lt;!&ndash;<p class="slds-truncate" title="금액">금액 : {!obj.Amount}</p>&ndash;&gt;
+                                                </dd>
+                                                <dt class="slds-dl_horizontal__detail slds-tile__metal">
+                                                    <p style="font-weight : bold;" class="slds-truncate" title="고객명">고객명
+                                                        : {!obj.AccountName}</p>
+                                                </dt>
+                                                <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p class="slds-truncate" title="계약 설명">계약 설명
+                                                        : {!obj.Description}</p>
+                                                </dd>-->
+                                                <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p style="font-weight : bold;" class="slds-truncate" title="계정 이름">계정 이름 : {!obj.AccountName}</p>
+                                                </dd>
+
+                                                <dt class="slds-dl_horizontal__detail slds-tile__metal">
+                                                    <p class="slds-truncate" title="연락처">연락처
+                                                        : <a href="{!obj.contactUrl}" target="_blank">{!obj.ContactName}</a></p>
+                                                </dt>
+                                                <dd class="slds-dl_horizontal__detail slds-tile__metal">
+                                                    <p class="slds-truncate" title="단계">단계
+                                                        : {!obj.StageName}</p>
+                                                </dd>
+                                                <dd class="slds-dl_horizontal__detail slds-tile__metal">
+                                                    <p class="slds-truncate" title="기회제품">기회제품
+                                                        : {!obj.OppItem}</p>
+                                                </dd>
+                                            </dl>
+
+                                        </lightning:tile>
+
+                                    </div>
+                                </div>
+                            </aura:iteration>
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </aura:if>
+            <aura:if isTrue="{!v.rbSelectedValue == 'Account'}">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12">
+                        <aura:if isTrue="{!v.isSearch == true}">
+                            <aura:iteration items="{!v.SearchAccountList}" var="obj" indexVar="dataIdx">
+                                <div class="slds-card" data-id="{!obj.AccountId}" data-lat="{!obj.lat}" data-lng="{!obj.lng}">
+                                    <div class="slds-p-around_x-small">
+                                        <lightning:tile label="">
+                                            <a href="{!obj.url}" target="_blank">{!obj.Name}</a>
+                                            <lightning:buttonIcon class="slds-float_right"
+                                                                  iconName="utility:record_create"
+                                                                  alternativeText="이벤트 생성" title="이벤트 생성"
+                                                                  onclick="{!c.fnCreateEvent}" aura:id="{!obj.AccountId}"/>
+                                            <lightning:buttonIcon class="slds-float_right" iconName="utility:search"
+                                                                  alternativeText="더보기" title="더보기"
+                                                                  onclick="{! c.navigateToRecord }"
+                                                                  aura:id="{!obj.AccountId}"/>
+                                            <!--label="{!obj.Name}" href="{!obj.url}"-->
+
+
+                                            <!--<lightning:card title="{!obj.Name}" actions="">
+                                                <aura:set attribute="actions">
+                                                    <lightning:button label="New Event"/>
+                                                </aura:set>
+                                            </lightning:card>-->
+
+                                            <!--<div aura:id="divId" onclick="{!c.fnCreateEvent}" aria-label="tttt">
+                                            </div>-->
+                                            <aura:set attribute="media">
+                                                <lightning:icon iconName="standard:groups"/>
+
+                                            </aura:set>
+
+                                            <dl class="slds-dl_horizontal">
+                                                <dt class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p class="slds-truncate" title="Key man">Key man : {!obj.KeyManName}</p>
+                                                </dt>
+                                                <!--<dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p class="slds-truncate" title="금액">
+                                                        <lightning:formattedNumber value="{!obj.Amount}"
+                                                                                   style="currency"
+                                                                                   currencyCode="KOR"
+                                                                                   currencyDisplayAs="name"
+                                                                                   minimumFractionDigits="0"/>
+                                                    </p>
+                                                    &lt;!&ndash;<p class="slds-truncate" title="금액">금액 : {!obj.Amount}</p>&ndash;&gt;
+                                                </dd>-->
+                                                <dt class="slds-dl_horizontal__detail slds-tile__metal">
+                                                    <p style="font-weight : bold;" class="slds-truncate" title="웹사이트">웹사이트
+                                                        : {!obj.WebSite}</p>
+                                                </dt>
+                                                <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p class="slds-truncate" title="업종">업종
+                                                        : {!obj.Industry}</p>
+                                                </dd>
+                                                <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                    <p class="slds-truncate" title="전화">전화
+                                                        : {!obj.Phone}</p>
+                                                </dd>
+                                            </dl>
+
+                                        </lightning:tile>
+
+                                    </div>
+                                </div>
+                            </aura:iteration>
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </aura:if>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

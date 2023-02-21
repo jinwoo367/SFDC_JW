@@ -1,0 +1,29 @@
+<!-- ***********************************************************************************
+* File Name   		: ExcelImportProgressPop.cmp
+* Description 		: 엑셀 파일로 업로드시 나타나는 Progress bar
+* Modification Log
+* Ver      Date            Author          Modification
+* ===================================================================================
+  1.0      2021.08.31      yr.lee          Create
+************************************************************************************ -->
+<aura:component implements="force:hasRecordId,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:appHostable,force:hasSObjectName,flexipage:availableForRecordHome,lightning:actionOverride" access="global">
+    <!-- modal -->
+    <aura:attribute name="progressValue" type="Integer" default="0"/>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <lightning:layout>
+                    <lightning:layoutItem size="12">
+                        <div class="slds-progress-bar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" role="progressbar">
+                            <span class="slds-progress-bar__value" style="{!'width:' + v.progressValue+'%'}">
+                                <span class="slds-assistive-text">Progress: {!v.progressValue+'%'}</span>
+                            </span>
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

@@ -1,0 +1,31 @@
+<!--
+ - Created by sjhyk on 2023-01-03.
+ -->
+
+<aura:component controller="AnyEventCalCtrl" implements="flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <ltng:require styles="{!$Resource.AnyEventCal + '/fullcalendar.min.css'}"/>
+    <aura:attribute name="events" type="Map"/> 
+    <aura:attribute name="objectLabel" type="String"/>
+    <aura:attribute name="sObjectName" type="String"/>
+    <aura:attribute name="titleField" type="String"/>
+    <aura:attribute name="startDateTimeField" type="String"/>
+    <aura:attribute name="endDateTimeField" type="String"/>
+    <aura:attribute name="descriptionField" type="String"/>
+    <aura:attribute name="userField" type="String"/>
+    <aura:attribute name="calendarButtons" type="String"/>
+    <aura:attribute name="weekends" type="Boolean"/>
+    <aura:attribute name="eventBackgroundColor" type="String"/>
+    <aura:attribute name="eventBorderColor" type="String"/>
+    <aura:attribute name="eventTextColor" type="String"/>
+    <aura:attribute name="idVal" type="String"/>
+    <aura:attribute name="titleVal" type="String"/>
+    <aura:attribute name="descriptionVal" type="String"/>
+    <aura:attribute name="startDateTimeVal" type="DateTime"/>
+    <aura:attribute name="endDateTimeVal" type="DateTime"/>
+    <aura:attribute name="newOrEdit" type="String" default="New"/>
+    <aura:attribute name="isShowModal" type="Boolean" default="false"/>
+    <aura:handler name="change" value="{!v.events}" action="{!c.renderCalendar}"/>
+
+
+    <div id="calendar" class="anyCalendar"></div>
+</aura:component>

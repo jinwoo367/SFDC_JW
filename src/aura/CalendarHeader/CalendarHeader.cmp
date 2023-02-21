@@ -1,0 +1,36 @@
+<!--
+ - Created by sjhyk on 2023-01-04.
+ -->
+
+<aura:component description="CalendarHeader"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome">
+
+    <!--<ltng:require styles="{!$Resource.slds_page_header_hide}"/>-->
+    <div id ='checkthis'>
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" padding="around-small">
+                <article class="slds-card" style="position:absolute; z-index:10; width : 100%; top: 0; left: 0; padding : 0; margin : 0;" >
+                    <div class="slds-card__header slds-grid">
+                        <div class="slds-media" style="width:100%;">
+                            <div class="slds-media__figure">
+                                <lightning:icon iconName="standard:event"/>
+                            </div>
+                            <div class="slds-media__body">
+                                <lightning:layout>
+                                    <lightning:layoutItem size="10">
+                                        <p class="slds-text-body_small slds-line-height_reset" style="padding-bottom: 0.5vh;">Account Calendar</p>
+                                        <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="활동 관리">계정 활동 관리</h1>
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2">
+                                        <lightning:button class="slds-float_right" iconName="utility:checkin" title="지도 보기" label="지도 보기" onclick="{!c.goMap}"/>
+                                    </lightning:layoutItem>
+                                </lightning:layout>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+
+</aura:component>

@@ -1,0 +1,61 @@
+1. 오늘의 할일
+- Task Record 를 조회하여 지도상에 노출
+  탭에 Lightning Component 등록
+* Object
+    - Activity
+        1. 방문시간	VisitTime__c	    Date/Time
+        2. 방문위치	VisitLocation__c	Geolocation
+
+* Apex Class
+    - TodoListComponentController.cls
+    - TodoMap_vfController.cls
+
+* Aura Component
+    - todoListComponent.bundle
+
+* VisualForce Page
+    - todoMap_vf.page
+
+====================================================================================
+
+2. 계정 활동 관리
+- full Calendar 를 활용한 화면
+  탭에 Lightning App Builder 등록
+
+* Object
+    - Opportunity
+        1. Contact  Contact__c	    Lookup(Contact)
+
+* Apex Class
+    - AnyEventCalCtrl.cls
+    - LookupFieldController.cls
+    - ManagedCalenderMainController.cls
+
+* Aura Component
+    - AnyCalendar.bundle
+    - CalendarHeader.bundle
+    - CalendarMain.bundle
+    - EventCalendar.bundle
+    - lookupField.bundle
+
+* Event
+    - selectedsObjectRecordEvent.evt
+
+* Static Resources
+    - AnyEventCal.resource
+
+====================================================================================
+
+3. PDF 생성
+- 레코드의 내용을 PDF 형식으로 화면에 노출해주며, 다운로드 기능까지 포함
+  해당 Object 에 Action 등록 이후, Action 추가 필요.
+
+* Apex Class
+    - QCReportButtonController.cls
+    - QCReportPageController.cls
+
+* Aura Component
+    - QCReportButton.bundle
+
+* VisualForce Page
+    - QCReportPage.page
